@@ -1,77 +1,115 @@
-# Configuración de Gitea con Docker
+# Gitea con Docker y Nginx
 
-Este repositorio contiene los archivos de configuración de Docker necesarios para ejecutar Gitea, un servicio Git autohospedado con PostgreSQL.
+Este proyecto configura un servicio de Gitea autohospedado utilizando Docker, con un proxy inverso Nginx que proporciona acceso a través de HTTPS y SSH.
 
-## Requisitos previos
+## Componentes
 
-- Docker Engine (versión 18.09 o posterior)
-- Docker Compose (versión 1.25 o posterior)
+- **Gitea**: El servicio de Git autohospedado.
+- **PostgreSQL**: La base de datos para Gitea.
+- **Nginx**: Actúa como proxy inverso para el tráfico web (HTTPS) y Git (SSH).
 
-## Comenzando
+## Requisitos Previos
 
-1. Asegúrate de tener Docker y Docker Compose instalados en tu sistema.
+- Docker Engine
+- Docker Compose
+- OpenSSL (para generar certificados)
+- Git
 
-2. Clona o copia estos archivos a un directorio de tu elección.
+## Instrucciones de Instalación
 
-3. Crea la estructura de directorios requerida:
-   ```bash
-   mkdir -p gitea postgres
-   ```
+### 1. Clonar el Repositorio
 
-4. Ejecuta el siguiente comando para iniciar Gitea:
-   ```bash
-   docker-compose up -d
-   ```
+Si estás trabajando con un repositorio Git, clónalo. Si no, asegúrate de que todos los archivos de este proyecto estén en un directorio en tu máquina.
 
-5. Espera a que los contenedores se inicien. Puedes verificar el estado con:
-   ```bash
-   docker-compose logs -f
-   ```
+### 2. Configurar Variables de Entorno
 
-6. Accede a Gitea en tu navegador en `http://localhost:3000`
+Copia el archivo de ejemplo `.env.example` a un nuevo archivo llamado `.env`.
 
-7. Sigue el asistente de instalación para completar la configuración.
+```bash
+cp .env.example .env
+```
 
-## Configuración por defecto
+Abre el archivo `.env` y ajusta las variables. Como mínimo, debes configurar las contraseñas y la URL que usarás para acceder a Gitea. Por ejemplo:
 
-- Interfaz web de Gitea: `http://localhost:3000`
-- Puerto SSH: `2222` (mapea al SSH de tu host si es necesario)
-- Base de datos: PostgreSQL
-- Nombre de la base de datos: `gitea`
-- Usuario de la base de datos: `gitea`
-- Contraseña de la base de datos: `gitea`
+```env
+# En .env
+GITEA__server__ROOT_URL=https://192.168.0.111
+GITEA__server__SSH_DOMAIN=192.168.0.111
+GITEA__server__DOMAIN=192.168.0.111
+GITEA__server__SSH_PORT=22
+# ... otras variables ...
+```
 
-## Registro de usuarios
+**Importante:** `GITEA__server__SSH_PORT` se refiere al puerto _dentro_ del contenedor de Gitea, que es el `22`. El acceso externo se hará a través del puerto `2222` mapeado por Nginx.
 
-El registro de nuevos usuarios está **deshabilitado** por defecto. Solo un administrador puede crear cuentas de usuario.
-Si deseas habilitar el registro, cambia `GITEA__service__DISABLE_REGISTRATION=true` a `false` en el archivo `.env`.
+### 3. Generar Certificados SSL
 
-## Persistencia de datos
+Nginx está configurado para usar HTTPS. Necesitas generar un certificado autofirmado para el dominio o IP que usarás.
 
-Los datos se almacenan en los siguientes directorios:
-- `./gitea` - Datos de la aplicación Gitea
-- `./postgres` - Datos de la base de datos PostgreSQL
+```bash
+cd nginx/ssl
+./generate_ssl.sh
+```
 
-Asegúrate de hacer copias de seguridad de estos directorios regularmente.
+Cuando el script te pida una IP, introduce la misma que usaste en el archivo `.env` (ej. `192.168.1.001`).
 
-## Detener los servicios
+### 4. Iniciar los Servicios
 
-Para detener los servicios:
+Una vez configurado, inicia todos los servicios con Docker Compose.
+
+```bash
+docker-compose up -d
+```
+
+### 5. Configuración de Red Local (Opcional, pero recomendado)
+
+Si usaste un nombre de dominio personalizado (como `gitea.local`) en lugar de una IP en los pasos anteriores, debes añadirlo a tu archivo `hosts` local para poder acceder desde tu navegador.
+
+- **Windows**: `C:\Windows\System32\drivers\etc\hosts`
+- **Linux/macOS**: `/etc/hosts`
+
+Añade una línea como esta:
+
+```
+127.0.0.1   gitea.local
+```
+
+_(Reemplaza `127.0.0.1` por la IP de tu máquina si es diferente, y `gitea.local` por el dominio que elegiste)._
+
+## Cómo Usar Gitea
+
+### Acceso Web
+
+Abre tu navegador y ve a la URL que configuraste. Basado en el ejemplo anterior, sería:
+**`https://192.168.1.001`**
+
+Como estás usando un certificado autofirmado, tu navegador mostrará una advertencia de seguridad. Debes aceptarla para continuar.
+
+### Acceso con Git (SSH)
+
+Para clonar, hacer push o pull de repositorios, usa el puerto `2222`.
+
+1.  **Añade tu clave SSH a Gitea**: Primero, sube tu clave pública SSH a tu perfil de usuario en la interfaz web de Gitea.
+
+2.  **Clona un repositorio**:
+    ```bash
+    git clone ssh://git@192.168.1.001:2222/tu-usuario/tu-repo.git
+    ```
+
+## Mantenimiento
+
+### Detener los Servicios
+
 ```bash
 docker-compose down
 ```
 
-## Actualizar Gitea
+### Ver Logs
 
-Para actualizar a la última versión:
-1. Obtén la última imagen: `docker-compose pull`
-2. Reinicia los servicios: `docker-compose up -d`
+```bash
+# Ver todos los logs
+docker-compose logs -f
 
-## Consideraciones de seguridad
-
-Para uso en producción:
-- Cambia las contraseñas predeterminadas en el archivo `.env`
-- Usa HTTPS con un proxy inverso (nginx, Apache, etc.)
-- Configura reglas de firewall adecuadas
-- Mantén actualizadas las imágenes de Docker
-- Revisa la configuración de registro de usuarios en el archivo .env
+# Ver logs de un servicio específico (ej. gitea)
+docker-compose logs -f server
+```

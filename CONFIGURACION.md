@@ -1,54 +1,62 @@
-# Personalización de variables de entorno para Gitea
+# Guía de Variables de Entorno (.env)
 
-## Variables disponibles
+Este archivo detalla las variables de entorno que puedes configurar en tu archivo `.env` para personalizar la instancia de Gitea.
 
-Puedes personalizar los valores en el archivo `.env` según tus necesidades:
+## Configuración del Servidor Gitea
 
-### Configuración general de Gitea
-- `GITEA__server__ROOT_URL`: URL raíz donde se accederá a Gitea (por defecto: http://localhost:3000)
-- `GITEA__server__SSH_DOMAIN`: Dominio para conexiones SSH (por defecto: localhost)
-- `GITEA__server__DOMAIN`: Dominio del servidor (por defecto: localhost)
-- `GITEA__server__HTTP_PORT`: Puerto HTTP de Gitea (por defecto: 3000)
-- `GITEA__server__SSH_PORT`: Puerto SSH de Gitea (por defecto: 2222)
+Estas variables definen cómo Gitea se ve a sí mismo y cómo construye las URLs para el acceso web y SSH.
 
-### Configuración de la base de datos
-- `DB_TYPE`: Tipo de base de datos (por defecto: postgres)
-- `DB_HOST`: Host de la base de datos (por defecto: db:5432)
-- `DB_NAME`: Nombre de la base de datos (por defecto: gitea)
-- `DB_USER`: Usuario de la base de datos (por defecto: gitea)
-- `DB_PASSWD`: Contraseña de la base de datos (por defecto: gitea)
+- `GITEA__server__ROOT_URL`
 
-### Configuración de PostgreSQL
-- `POSTGRES_DB`: Nombre de la base de datos PostgreSQL (por defecto: gitea)
-- `POSTGRES_USER`: Usuario de PostgreSQL (por defecto: gitea)
-- `POSTGRES_PASSWORD`: Contraseña de PostgreSQL (por defecto: gitea)
+  - **Descripción**: La URL base completa que los usuarios usarán para acceder a la interfaz web de Gitea. Debe coincidir con la configuración de tu proxy inverso (Nginx).
+  - **Ejemplo**: `https://192.168.1.001` o `https://gitea.dominio.com`
 
-## Ejemplo de archivo .env personalizado
+- `GITEA__server__DOMAIN`
 
-```
-# Configuración de Gitea
-GITEA__server__ROOT_URL=http://mi-gitea.dominio.com
-GITEA__server__SSH_DOMAIN=mi-gitea.dominio.com
-GITEA__server__DOMAIN=mi-gitea.dominio.com
-GITEA__server__HTTP_PORT=3000
-GITEA__server__SSH_PORT=22
+  - **Descripción**: El nombre de dominio o IP del servidor, sin el protocolo.
+  - **Ejemplo**: `192.168.1.001`
 
-# Configuración de la base de datos
-DB_TYPE=postgres
-DB_HOST=db:5432
-DB_NAME=gitea
-DB_USER=gitea_usuario
-DB_PASSWD=gitea_contraseña_segura
+- `GITEA__server__SSH_DOMAIN`
 
-# Configuración de PostgreSQL
-POSTGRES_DB=gitea
-POSTGRES_USER=gitea_usuario
-POSTGRES_PASSWORD=gitea_contraseña_segura
-```
+  - **Descripción**: El dominio o IP que se usará para las URLs de Git sobre SSH. Debe ser el mismo que `DOMAIN` en esta configuración.
+  - **Ejemplo**: `192.168.1.001`
 
-## Recomendaciones de seguridad
+- `GITEA__server__HTTP_PORT`
 
-1. Cambia las contraseñas predeterminadas antes de usar en producción
-2. Usa contraseñas seguras para la base de datos
-3. Considera usar una red privada para la comunicación entre contenedores
-4. Usa HTTPS con un proxy inverso como nginx para conexiones externas
+  - **Descripción**: El puerto en el que el contenedor de Gitea escucha internamente. El proxy inverso (Nginx) se conectará a este puerto.
+  - **Valor por defecto**: `3000` (No deberías necesitar cambiarlo).
+
+- `GITEA__server__SSH_PORT`
+  - **Descripción**: El puerto en el que el servicio SSH de Gitea escucha _dentro del contenedor_. Nginx redirigirá el tráfico SSH a este puerto.
+  - **Valor por defecto**: `22` (No deberías necesitar cambiarlo).
+
+---
+
+## Configuración de la Base de Datos (Gitea)
+
+Estas variables le dicen a Gitea cómo conectarse a la base de datos PostgreSQL.
+
+- `DB_TYPE`: `postgres`
+- `DB_HOST`: `db:5432` (Usa el nombre del servicio de Docker y el puerto interno).
+- `DB_NAME`: El nombre de la base de datos (ej. `gitea`).
+- `DB_USER`: El usuario para la base de datos.
+- `DB_PASSWD`: La contraseña para el usuario de la base de datos.
+
+---
+
+## Configuración del Contenedor PostgreSQL
+
+Estas variables se usan para inicializar el contenedor de la base de datos la primera vez que se ejecuta. **Deben coincidir con las credenciales que le proporcionas a Gitea arriba**.
+
+- `POSTGRES_DB`: Nombre de la base de datos a crear.
+- `POSTGRES_USER`: Usuario a crear.
+- `POSTGRES_PASSWORD`: Contraseña para el nuevo usuario.
+
+---
+
+## Configuración del Registro de Usuarios
+
+- `GITEA__service__DISABLE_REGISTRATION`
+  - **Descripción**: Controla si los nuevos usuarios pueden registrarse por sí mismos.
+  - `true`: Deshabilita el registro público (recomendado). Solo un administrador puede crear usuarios.
+  - `false`: Permite que cualquiera se registre.
