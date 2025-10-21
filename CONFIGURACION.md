@@ -65,6 +65,37 @@ Estas variables se usan para inicializar el contenedor de la base de datos la pr
 
 ---
 
+## Configuración de Seguridad
+
+Estas variables controlan aspectos importantes de seguridad en tu instancia de Gitea.
+
+- `GITEA__service__REQUIRE_SIGNIN_VIEW`
+  - **Descripción**: Requiere que los usuarios inicien sesión para ver cualquier contenido en Gitea. Si está en `true`, todos los repositorios y páginas serán privadas para usuarios no autenticados.
+  - **Valores posibles**: `true` (recomendado para entornos privados) o `false`
+  - **Valor por defecto**: `false`
+
+- `GITEA__repository__DEFAULT_PRIVATE`
+  - **Descripción**: Establece el nivel de privacidad predeterminado para los nuevos repositorios creados.
+  - **Valores posibles**: `private` (recomendado) o `public`
+  - **Valor por defecto**: `public`
+
+- `GITEA__repository__ENABLE_PUSH_CREATE_USER`
+  - **Descripción**: Controla si los usuarios pueden crear automáticamente nuevos repositorios mediante push de Git.
+  - **Valores posibles**: `false` (recomendado) o `true`
+  - **Valor por defecto**: `true`
+
+- `GITEA__repository__ENABLE_PUSH_CREATE_ORG`
+  - **Descripción**: Controla si las organizaciones pueden crear automáticamente nuevos repositorios mediante push de Git.
+  - **Valores posibles**: `false` (recomendado) o `true`
+  - **Valor por defecto**: `true`
+
+- `GITEA__repository__DISABLE_HTTP_GIT`
+  - **Descripción**: Deshabilita clonación/interacción por HTTP/HTTPS para Git. Solo permite acceso por SSH si está habilitado.
+  - **Valores posibles**: `false` (por defecto) o `true` (más restrictivo)
+  - **Valor por defecto**: `false`
+
+---
+
 ## Configuración de Backups
 
 Estas variables controlan el comportamiento del servicio de copias de seguridad.
