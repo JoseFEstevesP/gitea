@@ -29,6 +29,12 @@ services:
       - GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION=${GITEA__service__ALLOW_ONLY_EXTERNAL_REGISTRATION}
       # Configuración de seguridad
       - GITEA__security__INSTALL_LOCK=true
+      # Configuración de seguridad
+      - GITEA__service__REQUIRE_SIGNIN_VIEW=${GITEA__service__REQUIRE_SIGNIN_VIEW}
+      - GITEA__repository__DEFAULT_PRIVATE=${GITEA__repository__DEFAULT_PRIVATE}
+      - GITEA__repository__ENABLE_PUSH_CREATE_USER=${GITEA__repository__ENABLE_PUSH_CREATE_USER}
+      - GITEA__repository__ENABLE_PUSH_CREATE_ORG=${GITEA__repository__ENABLE_PUSH_CREATE_ORG}
+      - GITEA__repository__DISABLE_HTTP_GIT=${GITEA__repository__DISABLE_HTTP_GIT}
     restart: always
     networks:
       - gitea

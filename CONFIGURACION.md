@@ -9,17 +9,17 @@ Estas variables definen cómo Gitea se ve a sí mismo y cómo construye las URLs
 - `GITEA__server__ROOT_URL`
 
   - **Descripción**: La URL base completa que los usuarios usarán para acceder a la interfaz web de Gitea. Debe coincidir con la configuración de tu proxy inverso (Nginx).
-  - **Ejemplo**: `https://192.168.1.001` o `https://gitea.dominio.com`
+  - **Ejemplo**: `https://000.000.0.000` o `https://gitea.dominio.com`
 
 - `GITEA__server__DOMAIN`
 
   - **Descripción**: El nombre de dominio o IP del servidor, sin el protocolo.
-  - **Ejemplo**: `192.168.1.001`
+  - **Ejemplo**: `000.000.0.000`
 
 - `GITEA__server__SSH_DOMAIN`
 
   - **Descripción**: El dominio o IP que se usará para las URLs de Git sobre SSH. Debe ser el mismo que `DOMAIN` en esta configuración.
-  - **Ejemplo**: `192.168.1.001`
+  - **Ejemplo**: `000.000.0.000`
 
 - `GITEA__server__HTTP_PORT`
 
@@ -31,8 +31,6 @@ Estas variables definen cómo Gitea se ve a sí mismo y cómo construye las URLs
   - **Valor por defecto**: `22` (No deberías necesitar cambiarlo).
 
 ---
-
-
 
 ---
 

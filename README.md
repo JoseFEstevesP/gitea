@@ -34,14 +34,14 @@ Abre el archivo `.env` y ajusta las variables. Como mínimo, debes configurar la
 
 ```env
 # En .env
-GITEA__server__ROOT_URL=https://192.168.0.111
-GITEA__server__SSH_DOMAIN=192.168.0.111
-GITEA__server__DOMAIN=192.168.0.111
+GITEA__server__ROOT_URL=https://000.000.0.000
+GITEA__server__SSH_DOMAIN=000.000.0.000
+GITEA__server__DOMAIN=000.000.0.000
 GITEA__server__SSH_PORT=22
 # ... otras variables ...
 ```
 
-**Importante:** `GITEA__server__SSH_PORT` se refiere al puerto *dentro* del contenedor de Gitea, que es el `22`. El acceso externo se hará a través del puerto `2222` mapeado por Nginx.
+**Importante:** `GITEA__server__SSH_PORT` se refiere al puerto _dentro_ del contenedor de Gitea, que es el `22`. El acceso externo se hará a través del puerto `2222` mapeado por Nginx.
 
 ### 3. Generar Certificados SSL
 
@@ -52,7 +52,7 @@ cd nginx/ssl
 ./generate_ssl.sh
 ```
 
-Cuando el script te pida una IP, introduce la misma que usaste en el archivo `.env` (ej. `192.168.0.111`).
+Cuando el script te pida una IP, introduce la misma que usaste en el archivo `.env` (ej. `000.000.0.000`).
 
 ### 4. Iniciar los Servicios
 
@@ -72,17 +72,17 @@ Si usaste un nombre de dominio personalizado (como `gitea.local`) en lugar de un
 Añade una línea como esta:
 
 ```
-192.168.0.111   gitea.local
+000.000.0.000   gitea.local
 ```
 
-*(Reemplaza `gitea.local` por el dominio que elegiste).*
+_(Reemplaza `gitea.local` por el dominio que elegiste)._
 
 ## Cómo Usar Gitea
 
 ### Acceso Web
 
 Abre tu navegador y ve a la URL que configuraste. Basado en el ejemplo anterior, sería:
-**`https://192.168.0.111`**
+**`https://000.000.0.000`**
 
 Como estás usando un certificado autofirmado, tu navegador mostrará una advertencia de seguridad. Debes aceptarla para continuar.
 
@@ -94,7 +94,7 @@ Para clonar, hacer push o pull de repositorios, usa el puerto `2222`.
 
 2.  **Clona un repositorio**:
     ```bash
-    git clone ssh://git@192.168.0.111:2222/tu-usuario/tu-repo.git
+    git clone ssh://git@000.000.0.000:2222/tu-usuario/tu-repo.git
     ```
 
 ## Mantenimiento
