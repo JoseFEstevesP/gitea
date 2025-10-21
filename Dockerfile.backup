@@ -1,0 +1,20 @@
+# Usar una imagen de PostgreSQL que incluye las herramientas de cliente como pg_dump
+FROM postgres:15-alpine
+
+# Instalar utilidades adicionales
+RUN apk add --no-cache gzip coreutils dos2unix
+
+# Crear el directorio para los backups dentro del contenedor
+RUN mkdir -p /backups
+
+# Copiar el script de backup al contenedor
+COPY backup.sh /usr/local/bin/backup.sh
+
+# Asegurarse de que el script tenga el formato de línea correcto y sea ejecutable
+RUN dos2unix /usr/local/bin/backup.sh && \
+    chmod +x /usr/local/bin/backup.sh
+
+# Comando que se ejecutará al iniciar el contenedor
+# Inicia un bucle infinito que ejecuta el script de backup y luego espera un intervalo de tiempo.
+# El intervalo se puede configurar con la variable de entorno BACKUP_INTERVAL_SECONDS (por defecto, 43200s = 12 horas).
+CMD ["sh", "-c", "while true; do /usr/local/bin/backup.sh; echo \"Próximo backup en ${BACKUP_INTERVAL_SECONDS:-43200} segundos...\"; sleep ${BACKUP_INTERVAL_SECONDS:-43200}; done"]

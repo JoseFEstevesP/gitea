@@ -65,3 +65,19 @@ services:
       - gitea
     depends_on:
       - server
+
+  db-backup:
+    build:
+      context: .
+      dockerfile: Dockerfile.backup
+    volumes:
+      - ./backups:/backups
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_HOST=db
+    depends_on:
+      - db
+    networks:
+      - gitea
+    restart: always

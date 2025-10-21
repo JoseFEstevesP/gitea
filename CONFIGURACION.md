@@ -60,3 +60,18 @@ Estas variables se usan para inicializar el contenedor de la base de datos la pr
   - **Descripción**: Controla si los nuevos usuarios pueden registrarse por sí mismos.
   - `true`: Deshabilita el registro público (recomendado). Solo un administrador puede crear usuarios.
   - `false`: Permite que cualquiera se registre.
+
+---
+
+## Configuración de Backups
+
+Estas variables controlan el comportamiento del servicio de copias de seguridad.
+
+- `RETENTION_DAYS`
+
+  - **Descripción**: El número de días que se conservarán los archivos de backup. Los backups más antiguos que este número de días se eliminarán automáticamente.
+  - **Valor por defecto**: `7`
+
+- `BACKUP_INTERVAL_SECONDS`
+  - **Descripción**: El intervalo de tiempo en segundos entre cada copia de seguridad.
+  - **Valor por defecto**: `43200` (equivale a 12 horas).

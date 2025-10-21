@@ -4,3 +4,4 @@
 nginx-selfsigned.key
 nginx/ssl/nginx-selfsigned.crt
 nginx/nginx.conf
+/backups
