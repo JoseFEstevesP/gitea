@@ -2,9 +2,6 @@ networks:
   gitea:
     external: false
 
-volumes:
-  redis-data:
-
 services:
   server:
     image: gitea/gitea:latest
@@ -26,11 +23,6 @@ services:
       - GITEA__server__DOMAIN=${GITEA__server__DOMAIN}
       - GITEA__server__HTTP_PORT=${GITEA__server__HTTP_PORT}
       - GITEA__server__SSH_PORT=${GITEA__server__SSH_PORT}
-      # Configuración de caché (Redis)
-      - GITEA__cache__ENABLED=${GITEA__cache__ENABLED}
-      - GITEA__cache__ADAPTER=${GITEA__cache__ADAPTER}
-      - GITEA__cache__HOST=${GITEA__cache__HOST}
-      - GITEA__cache__ITEM_TTL=${GITEA__cache__ITEM_TTL}
       # Configuración de registro - DESHABILITADO
       - GITEA__service__REGISTER_EMAIL_CONFIRM=${GITEA__service__REGISTER_EMAIL_CONFIRM}
       - GITEA__service__DISABLE_REGISTRATION=${GITEA__service__DISABLE_REGISTRATION}
@@ -46,7 +38,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - db
-      - redis
 
   db:
     image: postgres:15
@@ -62,15 +53,6 @@ services:
       - gitea
     volumes:
       - ./postgres:/var/lib/postgresql/data
-
-  redis:
-    image: redis:alpine
-    container_name: gitea-redis
-    restart: always
-    networks:
-      - gitea
-    volumes:
-      - redis-data:/data
 
   nginx:
     build: ./nginx
