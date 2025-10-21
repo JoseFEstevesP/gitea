@@ -7,6 +7,7 @@ Este proyecto configura un servicio de Gitea autohospedado utilizando Docker, co
 - **Gitea**: El servicio de Git autohospedado.
 - **PostgreSQL**: La base de datos para Gitea.
 - **Nginx**: Actúa como proxy inverso para el tráfico web (HTTPS) y Git (SSH).
+- **Redis**: Almacén de datos en memoria para caché y sesiones, mejorando el rendimiento.
 
 ## Requisitos Previos
 
@@ -40,7 +41,7 @@ GITEA__server__SSH_PORT=22
 # ... otras variables ...
 ```
 
-**Importante:** `GITEA__server__SSH_PORT` se refiere al puerto _dentro_ del contenedor de Gitea, que es el `22`. El acceso externo se hará a través del puerto `2222` mapeado por Nginx.
+**Importante:** `GITEA__server__SSH_PORT` se refiere al puerto *dentro* del contenedor de Gitea, que es el `22`. El acceso externo se hará a través del puerto `2222` mapeado por Nginx.
 
 ### 3. Generar Certificados SSL
 
@@ -51,7 +52,7 @@ cd nginx/ssl
 ./generate_ssl.sh
 ```
 
-Cuando el script te pida una IP, introduce la misma que usaste en el archivo `.env` (ej. `192.168.1.001`).
+Cuando el script te pida una IP, introduce la misma que usaste en el archivo `.env` (ej. `192.168.0.111`).
 
 ### 4. Iniciar los Servicios
 
@@ -71,17 +72,17 @@ Si usaste un nombre de dominio personalizado (como `gitea.local`) en lugar de un
 Añade una línea como esta:
 
 ```
-127.0.0.1   gitea.local
+192.168.0.111   gitea.local
 ```
 
-_(Reemplaza `127.0.0.1` por la IP de tu máquina si es diferente, y `gitea.local` por el dominio que elegiste)._
+*(Reemplaza `gitea.local` por el dominio que elegiste).*
 
 ## Cómo Usar Gitea
 
 ### Acceso Web
 
 Abre tu navegador y ve a la URL que configuraste. Basado en el ejemplo anterior, sería:
-**`https://192.168.1.001`**
+**`https://192.168.0.111`**
 
 Como estás usando un certificado autofirmado, tu navegador mostrará una advertencia de seguridad. Debes aceptarla para continuar.
 
@@ -93,7 +94,7 @@ Para clonar, hacer push o pull de repositorios, usa el puerto `2222`.
 
 2.  **Clona un repositorio**:
     ```bash
-    git clone ssh://git@192.168.1.001:2222/tu-usuario/tu-repo.git
+    git clone ssh://git@192.168.0.111:2222/tu-usuario/tu-repo.git
     ```
 
 ## Mantenimiento

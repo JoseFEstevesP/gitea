@@ -32,6 +32,31 @@ Estas variables definen cómo Gitea se ve a sí mismo y cómo construye las URLs
 
 ---
 
+## Configuración de Caché (Redis)
+
+Estas variables, configuradas directamente en `docker-compose.yml`, le indican a Gitea cómo usar Redis para mejorar el rendimiento.
+
+- `GITEA__cache__ENABLED`
+
+  - **Descripción**: Habilita el sistema de caché.
+  - **Valor**: `true`
+
+- `GITEA__cache__ADAPTER`
+
+  - **Descripción**: Especifica que se usará Redis como adaptador de caché.
+  - **Valor**: `redis`
+
+- `GITEA__cache__HOST`
+
+  - **Descripción**: La dirección para conectarse a Redis. Usa el nombre del servicio de Docker.
+  - **Valor**: `redis:6379`
+
+- `GITEA__cache__ITEM_TTL`
+  - **Descripción**: El tiempo de vida por defecto para los elementos en caché.
+  - **Valor**: `3600s` (1 hora)
+
+---
+
 ## Configuración de la Base de Datos (Gitea)
 
 Estas variables le dicen a Gitea cómo conectarse a la base de datos PostgreSQL.
