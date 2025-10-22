@@ -1,6 +1,6 @@
 # Gitea con Docker y Nginx
 
-Este proyecto configura un servicio de Gitea autohospedado utilizando Docker, con un proxy inverso Nginx que proporciona acceso a través de HTTPS y SSH.
+Este proyecto configura un servicio de Gitea autohospedado para uso interno dentro de la empresa, utilizando Docker, con un proxy inverso Nginx que proporciona acceso a través de HTTPS y SSH únicamente dentro de la red corporativa.
 
 ## Componentes
 
@@ -13,7 +13,6 @@ Este proyecto configura un servicio de Gitea autohospedado utilizando Docker, co
 
 - Docker Engine
 - Docker Compose
-- OpenSSL (para generar certificados)
 - Git
 
 ## Instrucciones de Instalación
@@ -30,29 +29,29 @@ Copia el archivo de ejemplo `.env.example` a un nuevo archivo llamado `.env`.
 cp .env.example .env
 ```
 
-Abre el archivo `.env` y ajusta las variables. Como mínimo, debes configurar las contraseñas y la URL que usarás para acceder a Gitea. Por ejemplo:
+Abre el archivo `.env` y ajusta las variables. Como mínimo, debes configurar las contraseñas y la URL interna que usarás para acceder a Gitea. Por ejemplo:
 
 ```env
 # En .env
-GITEA__server__ROOT_URL=https://000.000.0.000
-GITEA__server__SSH_DOMAIN=000.000.0.000
-GITEA__server__DOMAIN=000.000.0.000
+GITEA__server__ROOT_URL=https://gitea.empresa.local
+GITEA__server__SSH_DOMAIN=gitea.empresa.local
+GITEA__server__DOMAIN=gitea.empresa.local
 GITEA__server__SSH_PORT=22
 # ... otras variables ...
 ```
 
-**Importante:** `GITEA__server__SSH_PORT` se refiere al puerto _dentro_ del contenedor de Gitea, que es el `22`. El acceso externo se hará a través del puerto `2222` mapeado por Nginx.
+**Importante:** `GITEA__server__SSH_PORT` se refiere al puerto _dentro_ del contenedor de Gitea, que es el `22`. El acceso se hará a través del puerto `2222` mapeado por Nginx. Asegúrate de utilizar nombres de dominio o IPs internas que estén disponibles únicamente dentro de la red corporativa.
 
 ### 3. Generar Certificados SSL
 
-Nginx está configurado para usar HTTPS. Necesitas generar un certificado autofirmado para el dominio o IP que usarás.
+Nginx está configurado para usar HTTPS exclusivamente para acceso interno. Necesitas generar un certificado autofirmado para el dominio interno o IP que usarás dentro de la red corporativa.
 
 ```bash
 cd nginx/ssl
 ./generate_ssl.sh
 ```
 
-Cuando el script te pida una IP, introduce la misma que usaste en el archivo `.env` (ej. `000.000.0.000`).
+Cuando el script te pida una IP, introduce la IP interna que usarás (ej. `192.168.1.100`) o asegúrate de que el dominio interno esté correctamente configurado en los servidores DNS internos.
 
 ### 4. Iniciar los Servicios
 
@@ -62,9 +61,9 @@ Una vez configurado, inicia todos los servicios con Docker Compose.
 docker-compose up -d
 ```
 
-### 5. Configuración de Red Local (Opcional, pero recomendado)
+### 6. Configuración de Red Interna
 
-Si usaste un nombre de dominio personalizado (como `gitea.local`) en lugar de una IP en los pasos anteriores, debes añadirlo a tu archivo `hosts` local para poder acceder desde tu navegador.
+Si estás utilizando un nombre de dominio personalizado (como `gitea.empresa.local`) para acceder al servicio dentro de la red corporativa, este debe estar correctamente configurado en el DNS interno de la empresa. Para pruebas locales, puedes añadirlo al archivo `hosts` de cada equipo que necesite acceder al servicio.
 
 - **Windows**: `C:\Windows\System32\drivers\etc\hosts`
 - **Linux/macOS**: `/etc/hosts`
@@ -72,19 +71,21 @@ Si usaste un nombre de dominio personalizado (como `gitea.local`) en lugar de un
 Añade una línea como esta:
 
 ```
-000.000.0.000   gitea.local
+192.168.1.100   gitea.empresa.local
 ```
 
-_(Reemplaza `gitea.local` por el dominio que elegiste)._
+_(Reemplaza `gitea.empresa.local` por el dominio interno que estés usando y la IP con la dirección interna del servidor)._ 
+
+**Nota:** En un entorno de producción, este dominio debería estar configurado en el servidor DNS interno de la empresa para que todos los usuarios puedan acceder al servicio.
 
 ## Cómo Usar Gitea
 
 ### Acceso Web
 
-Abre tu navegador y ve a la URL que configuraste. Basado en el ejemplo anterior, sería:
-**`https://000.000.0.000`**
+Abre tu navegador y ve a la URL interna que configuraste. Basado en el ejemplo anterior, sería:
+**`https://gitea.empresa.local`**
 
-Como estás usando un certificado autofirmado, tu navegador mostrará una advertencia de seguridad. Debes aceptarla para continuar.
+Como estás usando un certificado autofirmado para uso interno, tu navegador mostrará una advertencia de seguridad. Debes aceptarla para continuar.
 
 ### Acceso con Git (SSH)
 
@@ -94,7 +95,7 @@ Para clonar, hacer push o pull de repositorios, usa el puerto `2222`.
 
 2.  **Clona un repositorio**:
     ```bash
-    git clone ssh://git@000.000.0.000:2222/tu-usuario/tu-repo.git
+    git clone ssh://git@gitea.empresa.local:2222/tu-usuario/tu-repo.git
     ```
 
 ## Mantenimiento

@@ -1,6 +1,6 @@
 # Guía de Variables de Entorno (.env)
 
-Este archivo detalla las variables de entorno que puedes configurar en tu archivo `.env` para personalizar la instancia de Gitea.
+Este archivo detalla las variables de entorno que puedes configurar en tu archivo `.env` para personalizar la instancia de Gitea para uso interno en la empresa.
 
 ## Configuración del Servidor Gitea
 
@@ -8,18 +8,18 @@ Estas variables definen cómo Gitea se ve a sí mismo y cómo construye las URLs
 
 - `GITEA__server__ROOT_URL`
 
-  - **Descripción**: La URL base completa que los usuarios usarán para acceder a la interfaz web de Gitea. Debe coincidir con la configuración de tu proxy inverso (Nginx).
-  - **Ejemplo**: `https://000.000.0.000` o `https://gitea.dominio.com`
+  - **Descripción**: La URL base completa que los usuarios usarán para acceder a la interfaz web de Gitea. Debe coincidir con la configuración de tu proxy inverso (Nginx). Esta debe ser una URL interna accesible únicamente dentro de la red corporativa.
+  - **Ejemplo**: `https://gitea.empresa.local` o `https://192.168.1.100`
 
 - `GITEA__server__DOMAIN`
 
-  - **Descripción**: El nombre de dominio o IP del servidor, sin el protocolo.
-  - **Ejemplo**: `000.000.0.000`
+  - **Descripción**: El nombre de dominio o IP del servidor interno, sin el protocolo. Debe ser accesible únicamente dentro de la red corporativa.
+  - **Ejemplo**: `gitea.empresa.local` o `192.168.1.100`
 
 - `GITEA__server__SSH_DOMAIN`
 
-  - **Descripción**: El dominio o IP que se usará para las URLs de Git sobre SSH. Debe ser el mismo que `DOMAIN` en esta configuración.
-  - **Ejemplo**: `000.000.0.000`
+  - **Descripción**: El dominio o IP interno que se usará para las URLs de Git sobre SSH. Debe ser accesible únicamente dentro de la red corporativa y ser el mismo que `DOMAIN` en esta configuración.
+  - **Ejemplo**: `gitea.empresa.local` o `192.168.1.100`
 
 - `GITEA__server__HTTP_PORT`
 
@@ -70,13 +70,13 @@ Estas variables se usan para inicializar el contenedor de la base de datos la pr
 Estas variables controlan aspectos importantes de seguridad en tu instancia de Gitea.
 
 - `GITEA__service__REQUIRE_SIGNIN_VIEW`
-  - **Descripción**: Requiere que los usuarios inicien sesión para ver cualquier contenido en Gitea. Si está en `true`, todos los repositorios y páginas serán privadas para usuarios no autenticados.
-  - **Valores posibles**: `true` (recomendado para entornos privados) o `false`
+  - **Descripción**: Requiere que los usuarios inicien sesión para ver cualquier contenido en Gitea. Si está en `true`, todos los repositorios y páginas serán privadas para usuarios no autenticados. **Altamente recomendado para entornos corporativos internos**.
+  - **Valores posibles**: `true` (recomendado para entornos corporativos internos) o `false`
   - **Valor por defecto**: `false`
 
 - `GITEA__repository__DEFAULT_PRIVATE`
   - **Descripción**: Establece el nivel de privacidad predeterminado para los nuevos repositorios creados.
-  - **Valores posibles**: `private` (recomendado) o `public`
+  - **Valores posibles**: `private` (recomendado para entornos corporativos internos) o `public`
   - **Valor por defecto**: `public`
 
 - `GITEA__repository__ENABLE_PUSH_CREATE_USER`
